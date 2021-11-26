@@ -1,7 +1,7 @@
 [package]
 name = "csv-stream"
 author = "Conrad Ludgate <conradludgate@gmail.com"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 repository = "https://github.com/conradludgate/csv-stream"
 license = "Unlicense/MIT"
@@ -26,5 +26,5 @@ tokio = { version = "1", features = ["full"] }
 serde = { version = "1", features = ["derive"] }
 
 [features]
-default = []
+default = ["stream"]
 stream = ["futures", "pin-project"]
