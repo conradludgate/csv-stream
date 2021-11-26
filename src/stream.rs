@@ -3,15 +3,48 @@ use serde::Serialize;
 
 use crate::{Result, Writer};
 
-#[pin_project]
 /// A Streamable CSV creator
+///
+/// # Example
+///
+/// ```
+/// use std::error::Error;
+/// use csv_stream::WriterBuilder;
+/// use serde::Serialize;
+/// use futures::StreamExt;
+///
+/// # #[tokio::main]
+/// # async fn main() { example().await.unwrap(); }
+/// async fn example() -> Result<(), Box<dyn Error>> {
+///     #[derive(Serialize)]
+///     struct Row { foo: usize, bar: usize }
+///     let rows = [
+///         Row{ foo: 1, bar: 2 },
+///         Row{ foo: 3, bar: 4 },
+///     ];
+///     // a Stream over rows
+///     let stream = futures::stream::iter(rows);
+///
+///     let mut csv_stream = WriterBuilder::default().build_stream(stream);
+///
+///     let mut buf = vec![];
+///     while let Some(row) = csv_stream.next().await {
+///         let row = row.unwrap();
+///         buf.extend_from_slice(&row);
+///     }
+///
+///     let data = String::from_utf8(buf)?;
+///     assert_eq!(data, "foo,bar\n1,2\n3,4\n");
+///     Ok(())
+/// }
+/// ```
+#[pin_project]
 pub struct Stream<S> {
     #[pin]
     stream: S,
 
     writer: Writer,
 }
-
 impl<S> Stream<S> {
     pub fn new(stream: S, writer: Writer) -> Self {
         Self { stream, writer }

@@ -26,10 +26,8 @@ let rows = vec![
     },
 ];
 
-let writer = WriterBuilder::default().build();
-
 let row_stream = futures::stream::iter(ROWS);
-let csv_stream = Stream::new(row_stream, writer);
+let csv_stream = WriterBuilder::default().build_stream(row_stream);
 
 let mut buf = vec![];
 while let Some(res) = csv_stream.next().await {

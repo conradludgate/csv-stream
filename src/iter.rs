@@ -3,6 +3,36 @@ use serde::Serialize;
 use crate::{Result, Writer};
 
 /// An iterable CSV creator
+///
+/// # Example
+///
+/// ```
+/// use std::error::Error;
+/// use csv_stream::WriterBuilder;
+/// use serde::Serialize;
+///
+/// # fn main() { example().unwrap(); }
+/// fn example() -> Result<(), Box<dyn Error>> {
+///     #[derive(Serialize)]
+///     struct Row { foo: usize, bar: usize }
+///     let rows = [
+///         Row{ foo: 1, bar: 2 },
+///         Row{ foo: 3, bar: 4 },
+///     ];
+///
+///     let mut csv_iter = WriterBuilder::default().build_iter(rows);
+///
+///     let mut buf = vec![];
+///     for row in csv_iter {
+///         let row = row.unwrap();
+///         buf.extend_from_slice(&row);
+///     }
+///
+///     let data = String::from_utf8(buf)?;
+///     assert_eq!(data, "foo,bar\n1,2\n3,4\n");
+///     Ok(())
+/// }
+/// ```
 pub struct Iter<I> {
     iter: I,
 

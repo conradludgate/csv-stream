@@ -408,11 +408,75 @@ impl WriterBuilder {
     }
 
     /// Create a new iterator for creating CSVs from the given iterator of rows
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use std::error::Error;
+    /// use csv_stream::WriterBuilder;
+    /// use serde::Serialize;
+    ///
+    /// # fn main() { example().unwrap(); }
+    /// fn example() -> Result<(), Box<dyn Error>> {
+    ///     #[derive(Serialize)]
+    ///     struct Row { foo: usize, bar: usize }
+    ///     let rows = [
+    ///         Row{ foo: 1, bar: 2 },
+    ///         Row{ foo: 3, bar: 4 },
+    ///     ];
+    ///
+    ///     let mut csv_iter = WriterBuilder::default().build_iter(rows);
+    ///
+    ///     let mut buf = vec![];
+    ///     for row in csv_iter {
+    ///         let row = row.unwrap();
+    ///         buf.extend_from_slice(&row);
+    ///     }
+    ///
+    ///     let data = String::from_utf8(buf)?;
+    ///     assert_eq!(data, "foo,bar\n1,2\n3,4\n");
+    ///     Ok(())
+    /// }
+    /// ```
     pub fn build_iter<I: IntoIterator>(&self, iter: I) -> crate::Iter<I::IntoIter> {
         crate::Iter::new(iter, self.build())
     }
 
     /// Create a new stream for creating CSVs from the given stream of rows
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use std::error::Error;
+    /// use csv_stream::WriterBuilder;
+    /// use serde::Serialize;
+    /// use futures::StreamExt;
+    ///
+    /// # #[tokio::main]
+    /// # async fn main() { example().await.unwrap(); }
+    /// async fn example() -> Result<(), Box<dyn Error>> {
+    ///     #[derive(Serialize)]
+    ///     struct Row { foo: usize, bar: usize }
+    ///     let rows = [
+    ///         Row{ foo: 1, bar: 2 },
+    ///         Row{ foo: 3, bar: 4 },
+    ///     ];
+    ///     // a Stream over rows
+    ///     let stream = futures::stream::iter(rows);
+    ///
+    ///     let mut csv_stream = WriterBuilder::default().build_stream(stream);
+    ///
+    ///     let mut buf = vec![];
+    ///     while let Some(row) = csv_stream.next().await {
+    ///         let row = row.unwrap();
+    ///         buf.extend_from_slice(&row);
+    ///     }
+    ///
+    ///     let data = String::from_utf8(buf)?;
+    ///     assert_eq!(data, "foo,bar\n1,2\n3,4\n");
+    ///     Ok(())
+    /// }
+    /// ```
     #[cfg(feature = "stream")]
     pub fn build_stream<S>(&self, stream: S) -> crate::Stream<S> {
         crate::Stream::new(stream, self.build())
