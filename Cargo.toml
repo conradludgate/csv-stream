@@ -1,0 +1,27 @@
+[package]
+name = "csv-stream"
+author = "Conrad Ludgate <conradludgate@gmail.com"
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/conradludgate/csv-stream"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = "1"
+csv-core = "0.1"
+bstr = { version = "0.2", features = ["serde1"] }
+itoa = "0.4"
+ryu = "1"
+
+futures = { version = "0.3", optional = true }
+pin-project = { version = "1", optional = true }
+
+[dev-dependencies]
+csv-stream = { path = ".", features = ["stream"] }
+tokio = { version = "1.0", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+
+[features]
+default = []
+stream = ["futures", "pin-project"]
