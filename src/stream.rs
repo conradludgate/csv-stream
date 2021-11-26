@@ -4,6 +4,7 @@ use serde::Serialize;
 use crate::{Result, Writer};
 
 #[pin_project]
+/// A Streamable CSV creator
 pub struct Stream<S> {
     #[pin]
     stream: S,

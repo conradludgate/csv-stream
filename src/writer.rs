@@ -406,6 +406,17 @@ impl WriterBuilder {
         self.builder.escape(escape);
         self
     }
+
+    /// Create a new iterator for creating CSVs from the given iterator of rows
+    pub fn build_iter<I: IntoIterator>(&self, iter: I) -> crate::Iter<I::IntoIter> {
+        crate::Iter::new(iter, self.build())
+    }
+
+    /// Create a new stream for creating CSVs from the given stream of rows
+    #[cfg(feature = "stream")]
+    pub fn build_stream<S>(&self, stream: S) -> crate::Stream<S> {
+        crate::Stream::new(stream, self.build())
+    }
 }
 
 /// A already configured CSV writer.

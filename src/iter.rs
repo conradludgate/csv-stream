@@ -2,6 +2,7 @@ use serde::Serialize;
 
 use crate::{Result, Writer};
 
+/// An iterable CSV creator
 pub struct Iter<I> {
     iter: I,
 
